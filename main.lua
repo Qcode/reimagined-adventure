@@ -2,7 +2,7 @@ io.stdout:setvbuf('no')
 require 'loadFiles'
 function love.load()
     print('Loading Game')
-    gameManager = GameManager:new()
+    gameManager = GameManager:new(Menu:new())
 end
 
 function love.update(dt)
