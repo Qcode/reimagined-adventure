@@ -1,4 +1,5 @@
-function love.load()
+require "lib/class"
+function love.load() 
 end
 
 function love.update(dt)
