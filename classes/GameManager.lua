@@ -19,3 +19,8 @@ end
 function GameManager:mousepressed(x, y, button)
     self.state:mousepressed(x, y, button)
 end
+
+function GameManager:setState(newState)
+    self.state:cleanUp()
+    self.state = newState:new()
+end

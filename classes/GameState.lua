@@ -14,3 +14,6 @@ end
 
 function GameState:mousepressed(x, y, button)
 end
+
+function GameState:cleanUp()
+end
