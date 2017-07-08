@@ -1,4 +1,4 @@
-require "lib/class"
+require 'loadFiles'
 function love.load() 
 end
 
