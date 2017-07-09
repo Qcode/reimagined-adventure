@@ -11,7 +11,6 @@ function GameObject:initialize(properties)
 end
 
 function GameObject:update(dt)
-	print(self.xSpeed)
 	self.x = self.x + self.xSpeed*dt
 	self.y = self.y + self.ySpeed*dt
 end
@@ -23,4 +22,12 @@ function GameObject:keypressed(key)
 end
 
 function GameObject:mousepressed(x, y, button)
+end
+
+function GameObject:getCenterX()
+	return self.x + self.width/2
+end
+
+function GameObject:getCenterY()
+	return self.y + self.height/2
 end
