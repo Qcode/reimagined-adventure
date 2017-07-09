@@ -56,6 +56,10 @@ function Player:limitSpeed()
 	self.xSpeed = math.min(playerSpeed, self.xSpeed)
 	self.ySpeed = math.max(-playerSpeed, self.ySpeed)
 	self.ySpeed = math.min(playerSpeed, self.ySpeed)
+    if self.xSpeed ~= 0 and self.ySpeed ~= 0 then
+        self.xSpeed = self.xSpeed / math.sqrt(2)
+        self.ySpeed = self.ySpeed / math.sqrt(2)
+    end
 end
 
 function Player:isLeftDown()
