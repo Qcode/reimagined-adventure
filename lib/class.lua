@@ -117,3 +117,11 @@ function class:setmetamethod(name, value)
 	newmt[name] = value
 	setmetatable(self, newmt)
 end
+
+function class:addProperties(properties)
+    if properties then
+        for i, v in pairs(properties) do
+            self[i] = v
+        end
+    end
+end

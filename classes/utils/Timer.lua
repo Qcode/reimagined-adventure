@@ -8,10 +8,8 @@ Timer = class:new()
 
 function Timer:init(properties)
     self.terminating = false
-    for i, v in pairs(properties) do
-        self[i] = v
-    end
     self.currentTime = 0
+    self:addProperties(properties)
 end
 
 function Timer:update(dt)
