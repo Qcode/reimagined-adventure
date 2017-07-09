@@ -5,6 +5,7 @@ function Bullet:initialize(properties)
     self.parent.initialize(self, properties)
     self.xSpeed, self.ySpeed = self.xSpeed*bulletSpeed, self.ySpeed*bulletSpeed
     self.shape = 'circle'
+    self.hitboxShape = 'circle'
     self.radius = .25
 end
 

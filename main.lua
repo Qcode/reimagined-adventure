@@ -47,3 +47,12 @@ function getSpeedFromAngle(object, object2)
     local angle = math.atan2(yDist, xDist)
     return math.cos(angle), math.sin(angle)
 end
+
+local dist = function(x1, y1, x2, y2)
+    return math.sqrt((x2-x1)^2+(y2-y1)^2)
+end
+
+function circleCollision(object, object2)
+    local distance = dist(object.x, object.y, object2.x, object2.y)
+    return distance < object.radius + object2.radius
+end

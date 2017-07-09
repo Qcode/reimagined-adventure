@@ -48,6 +48,9 @@ function Game:keypressed(key)
             object:keypressed(key)
         end
     end
+    if key == 'space' then
+        self:newObject(Bullet, {x=3, y=3})
+    end
 end
 
 function Game:mousepressed(x, y, button)
@@ -76,16 +79,38 @@ function Game:deleteObjects()
 end
 
 function Game:collisionDetection(object, object2)
-    if object.shape == 'square' and object2.shape == 'square' then
+    local bulletCollision = object:isInstanceOf(Bullet) 
+        or object2:isInstanceOf(Bullet)
+    
+    local shape1 = not bulletCollision and object.shape or object.hitboxShape
+    local shape2 = not bulletCollision and object2.shape or object2.hitboxShape
+    if shape1 == 'square' and shape2 == 'square' then
         if aabbCollision(object, object2) then
             self:resolveCollision(object, object2)
             object:collision(object2)
             object2:collision(object)
         end
-    elseif object.shape == 'circle' and object2.shape == 'circle' then
+    elseif shape1 == 'circle' and shape2 == 'circle' then
+        local x1, y1, x2, y2 = object.x, object.y, object2.x, object2.y
+        if object.shape == 'square' then
+            x1 = object:getCenterX()
+            y1 = object:getCenterY()
+        end
+        if object2.shape == 'square' then
+            x2 = object2:getCenterX()
+            y2 = object2:getCenterY()
+        end
+        local collided = circleCollision(
+            {x = x1, y = y1, radius = object.radius},
+            {x = x2, y = y2, radius = object2.radius}
+        )
+        if collided then
+            object:collision(object)
+            object:collision(object2)
+        end
     else
-        local circleObject = (object.shape == 'circle') and object or object2
-        local squareObject = (object.shape == 'square') and object or object2
+        local circleObject = (shape1 == 'circle') and object or object2
+        local squareObject = (shape2 == 'square') and object or object2
         if aabbCircleCollision(squareObject, circleObject) then
             squareObject:collision(circleObject)
             circleObject:collision(squareObject)

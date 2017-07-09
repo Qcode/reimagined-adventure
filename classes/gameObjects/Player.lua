@@ -5,6 +5,8 @@ local playerSpeed = 5
 
 function Player:initialize(properties)
     self.parent.initialize(self, properties)
+    self.hitboxShape = 'circle'
+    self.radius = .4
 end
 
 function Player:update(dt)
@@ -21,6 +23,13 @@ function Player:draw()
 		self.width*32,
 		self.height*32
 	)
+    love.graphics.setColor(0, 0, 255)
+    love.graphics.circle(
+        'line',
+        self:getCenterX()*32,
+        self:getCenterY()*32,
+        self.radius*32
+    )
     love.graphics.setColor(255, 255, 255)
 end
 

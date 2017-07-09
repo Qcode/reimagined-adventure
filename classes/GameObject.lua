@@ -6,6 +6,7 @@ function GameObject:initialize(properties)
     self.xSpeed = 0
     self.ySpeed = 0
     self.shape = 'square' -- other option is circle
+    self.hitboxShape = 'square'
     self.width = 1
     self.height = 1
     self.radius = 0 --No effect unless their shape is circle
