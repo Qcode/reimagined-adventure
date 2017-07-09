@@ -13,3 +13,7 @@ function Bullet:draw()
     love.graphics.circle('fill', self.x*32, self.y*32, self.radius*32)
     love.graphics.setColor(255, 255, 255)
 end
+
+function Bullet:collision(otherObject)
+    self.delete = true
+end

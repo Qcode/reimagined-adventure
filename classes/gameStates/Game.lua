@@ -25,6 +25,7 @@ function Game:update(dt)
             end
         end
     end
+    self:deleteObjects()
 end
 
 function Game:draw()
@@ -53,6 +54,16 @@ function Game:newObject(objectClass, properties)
     table.insert(self.gameObjects[objectClass], objectClass:new(properties))
 end
 
+function Game:deleteObjects()
+    for classReference, classTable in pairs(self.gameObjects) do
+        for x = #classTable, 1, -1 do
+            if classTable[x].delete then
+                table.remove(classTable, x)
+            end
+        end
+    end
+end
+
 function Game:collisionDetection(object, object2)
     if object.shape == 'square' and object2.shape == 'square' then
     elseif object.shape == 'circle' and object2.shape == 'circle' then
@@ -60,7 +71,8 @@ function Game:collisionDetection(object, object2)
         local circleObject = (object.shape == 'circle') and object or object2
         local squareObject = (object.shape == 'square') and object or object2
         if aabbCircleCollision(squareObject, circleObject) then
-            print('Collision!', math.random())
+            squareObject:collision(circleObject)
+            circleObject:collision(squareObject)
         end
     end
 end

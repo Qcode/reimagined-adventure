@@ -10,6 +10,8 @@ function GameObject:initialize(properties)
     self.height = 1
     self.radius = 0 --No effect unless their shape is circle
     self.physicsObject = true
+
+    self.delete = false
     self:addProperties(properties)
 end
 
@@ -37,4 +39,7 @@ end
 
 function GameObject:getState()
     return gameManager.state
+end
+
+function GameObject:collision(otherObject)
 end
