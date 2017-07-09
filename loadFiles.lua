@@ -9,3 +9,4 @@ require 'classes/gameStates/Game'
 require 'classes/utils/Timer'
 
 require 'classes/gameObjects/Player'
+require 'classes/gameObjects/Bullet'

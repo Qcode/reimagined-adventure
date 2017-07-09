@@ -20,3 +20,14 @@ end
 function love.mousepressed(x, y, button)
     gameManager:mousepressed(x, y, button)
 end
+
+-- Thanks YellowAfterLife https://yal.cc/rectangle-circle-intersection-test/
+local min, max, pow = math.min, math.max
+function aabbCircleCollision(aabbObject, circleObject)
+    local farX = aabbObject.x + aabbObject.width
+    local farY = aabbObject.y + aabbObject.height
+    local nearestX = max(aabbObject.x, min(circleObject.x, farX))
+    local nearestY = max(aabbObject.y, min(circleObject.y, farY))
+    local deltaX, deltaY = circleObject.x - nearestX, circleObject.y - nearestY
+    return (deltaX^2 + deltaY^2) < (circleObject.radius^2)
+end

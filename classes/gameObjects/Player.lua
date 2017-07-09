@@ -24,6 +24,9 @@ function Player:draw()
 end
 
 function Player:keypressed(key)
+    if key == 'y' then
+        self.getState():newObject(Bullet)
+    end
 end
 
 function Player:mousepressed(x, y, button)
