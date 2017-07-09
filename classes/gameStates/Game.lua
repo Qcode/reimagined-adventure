@@ -3,7 +3,12 @@ Game = GameState:subclass('Game')
 function Game:initialize()
     love.graphics.setBackgroundColor(255, 255, 255)
     self.gameObjects = {}
-    self:newObject(Player)
+    self:newObject(Player, {x=9.5, y=5.625})
+    self:newObject(Tile, {x=0, y=0, width=8, height=1})
+    self:newObject(Tile, {x=12, y=0, width=12, height=1})
+    self:newObject(Tile, {x=0, y=1, width=1, height=12})
+    self:newObject(Tile, {x=19, y=1, width=1, height=12})
+    self:newObject(Tile, {x=0, y=10.25, width=20, height=1})
 end
 
 function Game:update(dt)
@@ -17,7 +22,8 @@ function Game:update(dt)
             if object.physicsObject then
                 for classReference2, table2 in pairs(self.gameObjects) do
                     for objectNumber2, object2 in pairs(table2) do
-                        if object.class ~= object2.class then
+                        if object.class ~= object2.class
+                            and not object:isInstanceOf(Tile) then
                             self:collisionDetection(object, object2)
                         end
                     end
@@ -66,6 +72,11 @@ end
 
 function Game:collisionDetection(object, object2)
     if object.shape == 'square' and object2.shape == 'square' then
+        if aabbCollision(object, object2) then
+            self:resolveCollision(object, object2)
+            object:collision(object2)
+            object2:collision(object)
+        end
     elseif object.shape == 'circle' and object2.shape == 'circle' then
     else
         local circleObject = (object.shape == 'circle') and object or object2
@@ -75,4 +86,24 @@ function Game:collisionDetection(object, object2)
             circleObject:collision(squareObject)
         end
     end
+end
+
+local abs = math.abs
+function Game:resolveCollision(object, object2)
+    local moveObject = (object:isInstanceOf(Player)) and object or object2
+    local otherObject = (not object:isInstanceOf(Player)) and object or object2
+    local upResolve = otherObject.y - (moveObject.y + moveObject.height)
+    local downResolve = otherObject.y + otherObject.height - moveObject.y
+    local leftResolve = otherObject.x - (moveObject.x + moveObject.width)
+    local rightResolve = otherObject.x + otherObject.width - moveObject.x
+
+    local yResolve = abs(upResolve) < abs(downResolve) and upResolve or downResolve
+    local xResolve = abs(leftResolve) < abs(rightResolve) and leftResolve or rightResolve
+    if abs(xResolve) < abs(yResolve) then
+        yResolve = 0
+    elseif abs(yResolve) < abs(xResolve) then
+        xResolve = 0
+    end
+    moveObject.x = moveObject.x + xResolve
+    moveObject.y = moveObject.y + yResolve
 end

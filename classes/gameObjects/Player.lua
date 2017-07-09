@@ -1,6 +1,7 @@
 Player = GameObject:subclass('Player')
 
 local leftControl, rightControl, upControl, downControl = 'a', 'd', 'w', 's'
+local playerSpeed = 5
 
 function Player:initialize(properties)
     self.parent.initialize(self, properties)
@@ -35,26 +36,26 @@ end
 function Player:movement()
 	self.xSpeed, self.ySpeed = 0, 0
 	if self:isLeftDown() then
-		self.xSpeed = -1
+		self.xSpeed = -playerSpeed
 	end
 	if self:isRightDown() then
-		self.xSpeed = 1
+		self.xSpeed = playerSpeed
 	end
 	if self:isUpDown() then
-		self.ySpeed = -1
+		self.ySpeed = -playerSpeed
 	end
 	if self:isDownDown() then
-		self.ySpeed = 1
+		self.ySpeed = playerSpeed
 	end
 
 	self:limitSpeed()
 end
 
 function Player:limitSpeed()
-	self.xSpeed = math.max(-1, self.xSpeed)
-	self.xSpeed = math.min(1, self.xSpeed)
-	self.ySpeed = math.max(-1, self.ySpeed)
-	self.ySpeed = math.min(1, self.ySpeed)
+	self.xSpeed = math.max(-playerSpeed, self.xSpeed)
+	self.xSpeed = math.min(playerSpeed, self.xSpeed)
+	self.ySpeed = math.max(-playerSpeed, self.ySpeed)
+	self.ySpeed = math.min(playerSpeed, self.ySpeed)
 end
 
 function Player:isLeftDown()
