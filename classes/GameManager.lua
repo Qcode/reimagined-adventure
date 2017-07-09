@@ -22,6 +22,7 @@ function GameManager:keypressed(key)
 end
 
 function GameManager:mousepressed(x, y, button)
+    local x, y = x/32/scale, y/32/scale
     self.state:mousepressed(x, y, button)
 end
 

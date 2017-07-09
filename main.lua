@@ -40,3 +40,10 @@ function aabbCollision(object, object2)
     local farY2 = object2.y + object2.height
     return (farX1 > x2 and x1 < farX2 and farY1 > y2 and y1 < farY2)
 end
+
+function getSpeedFromAngle(object, object2)
+    local xDist = object2.x - object:getCenterX()
+    local yDist = object2.y - object:getCenterY()
+    local angle = math.atan2(yDist, xDist)
+    return math.cos(angle), math.sin(angle)
+end

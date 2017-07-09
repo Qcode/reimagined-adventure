@@ -51,6 +51,11 @@ function Game:keypressed(key)
 end
 
 function Game:mousepressed(x, y, button)
+    for classReference, table in pairs(self.gameObjects) do
+        for objectNumber, object in pairs(table) do
+            object:mousepressed(x, y, button)
+        end
+    end
 end
 
 function Game:newObject(objectClass, properties)

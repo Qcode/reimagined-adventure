@@ -25,12 +25,20 @@ function Player:draw()
 end
 
 function Player:keypressed(key)
-    if key == 'y' then
-        self.getState():newObject(Bullet)
-    end
 end
 
 function Player:mousepressed(x, y, button)
+    if button == 1 then
+        local xSpeed, ySpeed = getSpeedFromAngle(self, {x = x, y = y})
+        local properties = {
+            x = self:getCenterX(),
+            y = self:getCenterY(),
+            xSpeed = xSpeed,
+            ySpeed = ySpeed,
+            shooterType = 'Player'
+        }
+        self:getState():newObject(Bullet, properties)
+    end
 end
 
 function Player:movement()

@@ -1,11 +1,11 @@
 Bullet = GameObject:subclass('Bullet')
-
+local bulletSpeed = 10
 function Bullet:initialize(properties)
+    self.shooterType = 'Enemy'
     self.parent.initialize(self, properties)
+    self.xSpeed, self.ySpeed = self.xSpeed*bulletSpeed, self.ySpeed*bulletSpeed
     self.shape = 'circle'
     self.radius = .25
-    self.xSpeed = 1
-    self.ySpeed = 1
 end
 
 function Bullet:draw()
@@ -15,5 +15,12 @@ function Bullet:draw()
 end
 
 function Bullet:collision(otherObject)
-    self.delete = true
+    local delete = false
+    if self.shooterType == 'Enemy' and otherObject:isInstanceOf(Player) then
+        delete = true
+    elseif self.shooterType == 'Player'
+        and not otherObject:isInstanceOf(Player) then
+        delete = true
+    end
+    self.delete = delete
 end
