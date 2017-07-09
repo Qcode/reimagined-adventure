@@ -1,7 +1,6 @@
-Menu = class:new()
-Menu:addparent(GameState)
+Menu = GameState:subclass('Menu')
 
-function Menu:init()
+function Menu:initialize()
     self.instructionsText = {
         'Welcome to Walnut Game!',
         'Use WASD to move around',
@@ -20,7 +19,7 @@ end
 function Menu:update(dt)
     self.advanceTimer:update(dt)
     if not love.mouse.isDown(1) or not love.mouse.isDown(2) then
-        self.advanceTimer:reset()
+       -- self.advanceTimer:reset()
     end
 end
 

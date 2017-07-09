@@ -1,6 +1,6 @@
-GameManager = class:new()
+GameManager = class('GameManager')
 
-function GameManager:init(startingState)
+function GameManager:initialize(startingState)
     self.state = startingState
 end
 

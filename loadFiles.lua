@@ -1,4 +1,4 @@
-require 'lib/class'
+class = require 'lib/class'
 require 'classes/GameManager'
 require 'classes/GameState'
 require 'classes/GameObject'

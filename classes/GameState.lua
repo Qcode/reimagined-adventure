@@ -1,4 +1,4 @@
-GameState = class:new()
+GameState = class('GameState')
 
 function GameState:init()
 end

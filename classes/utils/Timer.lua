@@ -1,4 +1,4 @@
-Timer = class:new()
+Timer = class('Timer')
 
 --Properties:
 --  timerLimit (required): number, when the timer ends
@@ -6,7 +6,7 @@ Timer = class:new()
 --  terminating (default: false): bool, if timer should be deleted after
 --                                                                 finishing
 
-function Timer:init(properties)
+function Timer:initialize(properties)
     self.terminating = false
     self.currentTime = 0
     self:addProperties(properties)

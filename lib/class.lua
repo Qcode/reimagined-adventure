@@ -1,127 +1,179 @@
---[[
-Copyright (c) 2009 Bart Bes
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without
-restriction, including without limitation the rights to use,
-copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following
-conditions:
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
-]]
+local middleclass = {
+  _VERSION     = 'middleclass v4.1.0',
+  _DESCRIPTION = 'Object Orientation for Lua',
+  _URL         = 'https://github.com/kikito/middleclass',
+  _LICENSE     = [[
+    MIT LICENSE
 
-local class_mt = {}
+    Copyright (c) 2011 Enrique García Cota
 
-function class_mt:__index(key)
-	if rawget(self, "__baseclass") then
-		return self.__baseclass[key]
-	end
-	return nil
-end
+    Permission is hereby granted, free of charge, to any person obtaining a
+    copy of this software and associated documentation files (the
+    "Software"), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to
+    the following conditions:
 
-function class_mt:__call(...)
-	return self:new(...)
-end
+    The above copyright notice and this permission notice shall be included
+    in all copies or substantial portions of the Software.
 
-function class_mt:__add(parent)
-	return self:addparent(parent)
-end
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  ]]
+}
 
-function class_mt:__eq(other)
-	if not other.__baseclass or other.__baseclass ~= self.__baseclass then return false end
-	for i, v in pairs(self) do
-		if not other[i] then
-			return false
-		end
-	end
-	for i, v in pairs(other) do
-		if not self[i] then
-			return false
-		end
-	end
-	return true
-end
+local function _createIndexWrapper(aClass, f)
+  if f == nil then
+    return aClass.__instanceDict
+  else
+    return function(self, name)
+      local value = aClass.__instanceDict[name]
 
-function class_mt:__lt(other)
-	if not other.__baseclass then return false end
-	if rawget(other.__baseclass, "__isparenttable") then
-		for i, v in pairs(other.__baseclass) do
-			if self == v or getmetatable(self).__lt(self, v) then return true end
-		end
-	else
-		if self == other.__baseclass or getmetatable(self).__t(self, other.__baseclass) then return true end
-	end
-	return false
-end
-
-function class_mt:__le(other)
-	return (self < other or self == other)
-end
-
-local pt_mt = {}
-function pt_mt:__index(key)
-	for i, v in pairs(self) do
-		if i ~= "__isparenttable" and v[key] then
-			return v[key]
-		end
-	end
-	return nil
-end
-
-class = setmetatable({ __baseclass = {} }, class_mt)
-
-function class:new(...)
-	local c = {}
-	c.__baseclass = self
-	setmetatable(c, getmetatable(self))
-	if c.init then
-		c:init(...)
-	end
-	return c
-end
-
-function class:convert(t)
-	t.__baseclass = self
-	setmetatable(t, getmetatable(self))
-	return t
-end
-
-function class:addparent(...)
-	if not rawget(self.__baseclass, "__isparenttable") then
-		local t = {__isparenttable = true, self.__baseclass, ...}
-		self.__baseclass = setmetatable(t, pt_mt)
-	else
-		for i, v in ipairs{...} do
-			table.insert(self.__baseclass, v)
-		end
-	end
-	return self
-end
-
-function class:setmetamethod(name, value)
-	local mt = getmetatable(self)
-	local newmt = {}
-	for i, v in pairs(mt) do
-		newmt[i] = v
-	end
-	newmt[name] = value
-	setmetatable(self, newmt)
-end
-
-function class:addProperties(properties)
-    if properties then
-        for i, v in pairs(properties) do
-            self[i] = v
-        end
+      if value ~= nil then
+        return value
+      elseif type(f) == "function" then
+        return (f(self, name))
+      else
+        return f[name]
+      end
     end
+  end
 end
+
+local function _propagateInstanceMethod(aClass, name, f)
+  f = name == "__index" and _createIndexWrapper(aClass, f) or f
+  aClass.__instanceDict[name] = f
+
+  for subclass in pairs(aClass.subclasses) do
+    if rawget(subclass.__declaredMethods, name) == nil then
+      _propagateInstanceMethod(subclass, name, f)
+    end
+  end
+end
+
+local function _declareInstanceMethod(aClass, name, f)
+  aClass.__declaredMethods[name] = f
+
+  if f == nil and aClass.super then
+    f = aClass.super.__instanceDict[name]
+  end
+
+  _propagateInstanceMethod(aClass, name, f)
+end
+
+local function _tostring(self) return "class " .. self.name end
+local function _call(self, ...) return self:new(...) end
+
+local function _createClass(name, super)
+  local dict = {parent=super}
+  dict.__index = dict
+
+  local aClass = { name = name, super = super, static = {},
+                   __instanceDict = dict, __declaredMethods = {},
+                   subclasses = setmetatable({}, {__mode='k'})  }
+
+  if super then
+    setmetatable(aClass.static, { __index = function(_,k) return rawget(dict,k) or super.static[k] end })
+  else
+    setmetatable(aClass.static, { __index = function(_,k) return rawget(dict,k) end })
+  end
+
+  setmetatable(aClass, { __index = aClass.static, __tostring = _tostring,
+                         __call = _call, __newindex = _declareInstanceMethod })
+
+  return aClass
+end
+
+local function _includeMixin(aClass, mixin)
+  assert(type(mixin) == 'table', "mixin must be a table")
+
+  for name,method in pairs(mixin) do
+    if name ~= "included" and name ~= "static" then aClass[name] = method end
+  end
+
+  for name,method in pairs(mixin.static or {}) do
+    aClass.static[name] = method
+  end
+
+  if type(mixin.included)=="function" then mixin:included(aClass) end
+  return aClass
+end
+
+local DefaultMixin = {
+  __tostring   = function(self) return "instance of " .. tostring(self.class) end,
+
+  initialize   = function(self, ...) end,
+
+  isInstanceOf = function(self, aClass)
+    return type(aClass) == 'table' and (aClass == self.class or self.class:isSubclassOf(aClass))
+  end,
+
+  addProperties = function(self, properties)
+  	if type(properties) == 'table' then
+		for i, v in pairs(properties) do
+			self[i] = v
+		end
+	end
+  end,
+
+  static = {
+    allocate = function(self)
+      assert(type(self) == 'table', "Make sure that you are using 'Class:allocate' instead of 'Class.allocate'")
+      return setmetatable({ class = self }, self.__instanceDict)
+    end,
+
+    new = function(self, ...)
+      assert(type(self) == 'table', "Make sure that you are using 'Class:new' instead of 'Class.new'")
+      local instance = self:allocate()
+      instance:initialize(...)
+      return instance
+    end,
+
+    subclass = function(self, name)
+      assert(type(self) == 'table', "Make sure that you are using 'Class:subclass' instead of 'Class.subclass'")
+      assert(type(name) == "string", "You must provide a name(string) for your class")
+
+      local subclass = _createClass(name, self)
+
+      for methodName, f in pairs(self.__instanceDict) do
+        _propagateInstanceMethod(subclass, methodName, f)
+      end
+      subclass.initialize = function(instance, ...) return self.initialize(instance, ...) end
+
+      self.subclasses[subclass] = true
+      self:subclassed(subclass)
+
+      return subclass
+    end,
+
+    subclassed = function(self, other) end,
+
+    isSubclassOf = function(self, other)
+      return type(other)      == 'table' and
+             type(self.super) == 'table' and
+             ( self.super == other or self.super:isSubclassOf(other) )
+    end,
+
+    include = function(self, ...)
+      assert(type(self) == 'table', "Make sure you that you are using 'Class:include' instead of 'Class.include'")
+      for _,mixin in ipairs({...}) do _includeMixin(self, mixin) end
+      return self
+    end
+	
+  }
+}
+
+function middleclass.class(name, super)
+  assert(type(name) == 'string', "A name (string) is needed for the new class")
+  return super and super:subclass(name) or _includeMixin(_createClass(name), DefaultMixin)
+end
+
+setmetatable(middleclass, { __call = function(_, ...) return middleclass.class(...) end })
+
+return middleclass
