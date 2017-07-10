@@ -1,7 +1,9 @@
 Player = GameObject:subclass('Player')
 
 local leftControl, rightControl, upControl, downControl = 'a', 'd', 'w', 's'
-local playerSpeed = 5
+local playerMaxSpeed = 5
+local playerAcceleration = 1.74
+local playerFriction = 3/4
 
 function Player:initialize(properties)
     self.parent.initialize(self, properties)
@@ -51,32 +53,42 @@ function Player:mousepressed(x, y, button)
 end
 
 function Player:movement()
-	self.xSpeed, self.ySpeed = 0, 0
 	if self:isLeftDown() then
-		self.xSpeed = -playerSpeed
+		self.xSpeed = self.xSpeed - playerAcceleration
 	end
 	if self:isRightDown() then
-		self.xSpeed = playerSpeed
+		self.xSpeed = self.xSpeed + playerAcceleration
 	end
 	if self:isUpDown() then
-		self.ySpeed = -playerSpeed
+		self.ySpeed = self.ySpeed - playerAcceleration
 	end
 	if self:isDownDown() then
-		self.ySpeed = playerSpeed
+		self.ySpeed = self.ySpeed + playerAcceleration
 	end
 
-	self:limitSpeed()
+    self:applyFriction()
+    self:capSpeed()
 end
 
-function Player:limitSpeed()
-	self.xSpeed = math.max(-playerSpeed, self.xSpeed)
-	self.xSpeed = math.min(playerSpeed, self.xSpeed)
-	self.ySpeed = math.max(-playerSpeed, self.ySpeed)
-	self.ySpeed = math.min(playerSpeed, self.ySpeed)
-    if self.xSpeed ~= 0 and self.ySpeed ~= 0 then
-        self.xSpeed = self.xSpeed / math.sqrt(2)
-        self.ySpeed = self.ySpeed / math.sqrt(2)
+function Player:capSpeed()
+	self.xSpeed = math.max(-playerMaxSpeed, self.xSpeed)
+	self.xSpeed = math.min(playerMaxSpeed, self.xSpeed)
+	self.ySpeed = math.max(-playerMaxSpeed, self.ySpeed)
+	self.ySpeed = math.min(playerMaxSpeed, self.ySpeed)
+    if math.abs(self.xSpeed) < 1/2 then
+        self.xSpeed = 0
     end
+    if math.abs(self.ySpeed) < 1/2 then
+        self.ySpeed = 0
+    end
+end
+
+function Player:applyFriction()
+    
+    local xDir = self.xSpeed ~= 0 and math.abs(self.xSpeed)/self.xSpeed or 0
+    local yDir = self.ySpeed ~= 0 and math.abs(self.ySpeed)/self.ySpeed or 0
+    self.xSpeed = self.xSpeed - playerFriction*xDir
+    self.ySpeed = self.ySpeed - playerFriction*yDir
 end
 
 function Player:isLeftDown()

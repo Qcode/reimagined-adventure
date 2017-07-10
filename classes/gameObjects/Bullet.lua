@@ -16,12 +16,10 @@ function Bullet:draw()
 end
 
 function Bullet:collision(otherObject)
-    local delete = false
     if self.shooterType == 'Enemy' and otherObject:isInstanceOf(Player) then
-        delete = true
+        self.delete = true
     elseif self.shooterType == 'Player'
         and not otherObject:isInstanceOf(Player) then
-        delete = true
+        self.delete = true
     end
-    self.delete = delete
 end

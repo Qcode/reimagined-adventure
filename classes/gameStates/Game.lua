@@ -105,12 +105,12 @@ function Game:collisionDetection(object, object2)
             {x = x2, y = y2, radius = object2.radius}
         )
         if collided then
-            object:collision(object)
             object:collision(object2)
+            object2:collision(object)
         end
     else
         local circleObject = (shape1 == 'circle') and object or object2
-        local squareObject = (shape2 == 'square') and object or object2
+        local squareObject = (shape1 == 'square') and object or object2
         if aabbCircleCollision(squareObject, circleObject) then
             squareObject:collision(circleObject)
             circleObject:collision(squareObject)
