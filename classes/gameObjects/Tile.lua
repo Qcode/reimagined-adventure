@@ -1,7 +1,7 @@
 Tile = GameObject:subclass('Tile')
 
-function Tile:initialize(properties)
-    self.parent.initialize(self, properties)
+function Tile:init(properties)
+    self.parent.init(self, properties)
 end
 
 function Tile:draw()

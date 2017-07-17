@@ -2,7 +2,7 @@ GameManager = class('GameManager')
 
 local scale = 2
 
-function GameManager:initialize(startingState)
+function GameManager:init(startingState)
 	love.graphics.setDefaultFilter('nearest', 'nearest')
 	love.window.setMode(640*scale, 360*scale)
     self.state = startingState

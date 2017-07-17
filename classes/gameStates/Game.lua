@@ -1,6 +1,6 @@
 Game = GameState:subclass('Game')
 
-function Game:initialize()
+function Game:init()
     love.graphics.setBackgroundColor(255, 255, 255)
     self.gameObjects = {}
     self:newObject(Player, {x=9.5, y=5.625})
@@ -79,9 +79,9 @@ function Game:deleteObjects()
 end
 
 function Game:collisionDetection(object, object2)
-    local bulletCollision = object:isInstanceOf(Bullet) 
+    local bulletCollision = object:isInstanceOf(Bullet)
         or object2:isInstanceOf(Bullet)
-    
+
     local shape1 = not bulletCollision and object.shape or object.hitboxShape
     local shape2 = not bulletCollision and object2.shape or object2.hitboxShape
     if shape1 == 'square' and shape2 == 'square' then

@@ -1,6 +1,6 @@
 GameObject = class('GameObject')
 
-function GameObject:initialize(properties)
+function GameObject:init(properties)
     self.x = 0
     self.y = 0
     self.xSpeed = 0

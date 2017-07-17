@@ -1,8 +1,8 @@
 Bullet = GameObject:subclass('Bullet')
 local bulletSpeed = 10
-function Bullet:initialize(properties)
+function Bullet:init(properties)
     self.shooterType = 'Enemy'
-    self.parent.initialize(self, properties)
+    self.parent.init(self, properties)
     self.xSpeed, self.ySpeed = self.xSpeed*bulletSpeed, self.ySpeed*bulletSpeed
     self.shape = 'circle'
     self.hitboxShape = 'circle'

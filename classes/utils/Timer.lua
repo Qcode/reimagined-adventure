@@ -6,7 +6,7 @@ Timer = class('Timer')
 --  terminating (default: false): bool, if timer should be deleted after
 --                                                                 finishing
 
-function Timer:initialize(properties)
+function Timer:init(properties)
     self.terminating = false
     self.currentTime = 0
     self:addProperties(properties)

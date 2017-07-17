@@ -1,6 +1,6 @@
 Menu = GameState:subclass('Menu')
 
-function Menu:initialize()
+function Menu:init()
     self.instructionsText = {
         'Welcome to Walnut Game!',
         'Use WASD to move around',

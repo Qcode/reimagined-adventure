@@ -5,8 +5,8 @@ local playerMaxSpeed = 5
 local playerAcceleration = 1.74
 local playerFriction = 3/4
 
-function Player:initialize(properties)
-    self.parent.initialize(self, properties)
+function Player:init(properties)
+    self.parent.init(self, properties)
     self.hitboxShape = 'circle'
     self.radius = .4
 end
@@ -84,7 +84,7 @@ function Player:capSpeed()
 end
 
 function Player:applyFriction()
-    
+
     local xDir = self.xSpeed ~= 0 and math.abs(self.xSpeed)/self.xSpeed or 0
     local yDir = self.ySpeed ~= 0 and math.abs(self.ySpeed)/self.ySpeed or 0
     self.xSpeed = self.xSpeed - playerFriction*xDir
