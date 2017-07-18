@@ -6,6 +6,7 @@ function GameManager:init(startingState)
 	love.graphics.setDefaultFilter('nearest', 'nearest')
 	love.window.setMode(640*scale, 360*scale)
     self.state = startingState
+    self.tileSize = 32
 end
 
 function GameManager:update(dt)
@@ -22,7 +23,7 @@ function GameManager:keypressed(key)
 end
 
 function GameManager:mousepressed(x, y, button)
-    local x, y = x/32/scale, y/32/scale
+    local x, y = x/self.tileSize/scale, y/self.tileSize/scale
     self.state:mousepressed(x, y, button)
 end
 

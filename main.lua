@@ -1,7 +1,8 @@
 io.stdout:setvbuf('no')
-require 'loadFiles'
 function love.load()
     print('Loading Game')
+    love.graphics.setDefaultFilter('nearest', 'nearest')
+    require 'loadFiles'
     gameManager = GameManager:new(Menu:new())
 end
 

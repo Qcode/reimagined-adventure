@@ -9,6 +9,7 @@ function Game:init()
     self:newObject(Tile, {x=0, y=1, width=1, height=12})
     self:newObject(Tile, {x=19, y=1, width=1, height=12})
     self:newObject(Tile, {x=0, y=10.25, width=20, height=1})
+    self:newObject(Frott, {x=3, y=3}) 
 end
 
 function Game:update(dt)
