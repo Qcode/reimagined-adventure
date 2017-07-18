@@ -1,0 +1,1 @@
+Boss = GameObject:subclass('Boss')

@@ -1,0 +1,1 @@
+Frott = Boss:subclass('Frott')

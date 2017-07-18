@@ -11,3 +11,6 @@ require 'classes/utils/Timer'
 require 'classes/gameObjects/Player'
 require 'classes/gameObjects/Bullet'
 require 'classes/gameObjects/Tile'
+
+require 'classes/gameObjects/Boss'
+require 'classes/gameObjects/bosses/Frott'
